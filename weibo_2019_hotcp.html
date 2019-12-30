@@ -1,0 +1,196 @@
+<!-- Styles -->
+<style>
+#chartdiv {
+  width: 100%;
+  height: 800px;
+}
+</style>
+
+<!-- Resources -->
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
+<!-- Chart code -->
+<script>
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+var chart = am4core.create("chartdiv", am4charts.ChordDiagram);
+
+// colors of main characters
+chart.colors.saturation = 0.45;
+chart.colors.step = 3;
+var colors = {
+    Rachel:chart.colors.next(),
+    Monica:chart.colors.next(),
+    Phoebe:chart.colors.next(),
+    Ross:chart.colors.next(),
+    Joey:chart.colors.next(),
+    Chandler:chart.colors.next()
+}
+
+// data was provided by: https://www.reddit.com/user/notrudedude
+
+chart.data = [{'from': '任正非', 'to': '华为', 'value': 6},
+ {'from': '何猷君', 'to': '奚梦瑶', 'value': 16},
+ {'from': '冯绍峰', 'to': '赵丽颖', 'value': 9},
+ {'from': '华为', 'to': '智慧', 'value': 6},
+ {'from': '华为', 'to': '鸿蒙', 'value': 9},
+ {'from': '向佐', 'to': '郭碧婷', 'value': 36},
+ {'from': '吴京', 'to': '胡歌', 'value': 6},
+ {'from': '吴昕', 'to': '钟汉良', 'value': 6},
+ {'from': '周杰伦', 'to': '阿信', 'value': 8},
+ {'from': '唐顿', 'to': '庄园', 'value': 7},
+ {'from': '姜潮', 'to': '麦迪娜', 'value': 7},
+ {'from': '孔刘', 'to': '李栋旭', 'value': 6},
+ {'from': '孙杨', 'to': '霍顿', 'value': 6},
+ {'from': '安宰贤', 'to': '惠善', 'value': 6},
+ {'from': '宋慧乔', 'to': '宋仲基', 'value': 7},
+ {'from': '张柏芝', 'to': '小儿子', 'value': 6},
+ {'from': '张若昀', 'to': '唐艺昕', 'value': 20},
+ {'from': '张铭恩', 'to': '徐璐', 'value': 9},
+ {'from': '徐璐', 'to': '张铭恩', 'value': 9},
+ {'from': '惠善', 'to': '安宰贤', 'value': 9},
+ {'from': '戚薇', 'to': '李承铉', 'value': 7},
+ {'from': '李易峰', 'to': '王思聪', 'value': 6},
+ {'from': '杜江', 'to': '霍思燕', 'value': 10},
+ {'from': '杨丞琳', 'to': '李荣浩', 'value': 6},
+ {'from': '林志玲', 'to': '老公', 'value': 6},
+ {'from': '汪峰', 'to': '章子怡', 'value': 7},
+ {'from': '海涛', 'to': '沈梦辰', 'value': 8},
+ {'from': '秋瓷炫', 'to': '于晓光', 'value': 9},
+ {'from': '罗志祥', 'to': '周扬青', 'value': 8},
+ {'from': '肖战', 'to': '王一博', 'value': 31},
+ {'from': '肖战', 'to': '那英', 'value': 6},
+ {'from': '萧定权', 'to': '陆文昔', 'value': 8},
+ {'from': '许昕', 'to': '刘诗雯', 'value': 6},
+ {'from': '贾乃亮', 'to': '李小璐', 'value': 6},
+ {'from': '赵丽颖', 'to': '冯绍峰', 'value': 8},
+ {'from': '赵琦君', 'to': '杨凯雯', 'value': 10},
+ {'from': '邓超', 'to': '鹿晗', 'value': 6},
+ {'from': '郑爽', 'to': '张恒', 'value': 18},
+ {'from': '金瀚', 'to': '曹曦', 'value': 6},
+ {'from': '高蜜', 'to': '邹凯', 'value': 6}]
+
+chart.dataFields.fromName = "from";
+chart.dataFields.toName = "to";
+chart.dataFields.value = "value";
+
+
+chart.nodePadding = 0.5;
+chart.minNodeSize = 0.01;
+chart.startAngle = 0;
+chart.endAngle = chart.startAngle + 360;
+chart.sortBy = "value";
+chart.fontSize = 16;
+
+var nodeTemplate = chart.nodes.template;
+nodeTemplate.readerTitle = "Click to show/hide or drag to rearrange";
+nodeTemplate.showSystemTooltip = true;
+nodeTemplate.propertyFields.fill = "color";
+nodeTemplate.tooltipText = "{name}: {total}";
+
+// when rolled over the node, make all the links rolled-over
+nodeTemplate.events.on("over", function(event) {    
+    var node = event.target;
+    node.outgoingDataItems.each(function(dataItem) {
+        if(dataItem.toNode){
+            dataItem.link.isHover = true;
+            dataItem.toNode.label.isHover = true;
+        }
+    })
+    node.incomingDataItems.each(function(dataItem) {
+        if(dataItem.fromNode){
+            dataItem.link.isHover = true;
+            dataItem.fromNode.label.isHover = true;
+        }
+    }) 
+
+    node.label.isHover = true;   
+})
+
+// when rolled out from the node, make all the links rolled-out
+nodeTemplate.events.on("out", function(event) {
+    var node = event.target;
+    node.outgoingDataItems.each(function(dataItem) {        
+        if(dataItem.toNode){
+            dataItem.link.isHover = false;                
+            dataItem.toNode.label.isHover = false;
+        }
+    })
+    node.incomingDataItems.each(function(dataItem) {
+        if(dataItem.fromNode){
+            dataItem.link.isHover = false;
+           dataItem.fromNode.label.isHover = false;
+        }
+    })
+
+    node.label.isHover = false;
+})
+
+var label = nodeTemplate.label;
+label.relativeRotation = 90;
+
+label.fillOpacity = 0.4;
+let labelHS = label.states.create("hover");
+labelHS.properties.fillOpacity = 1;
+
+nodeTemplate.cursorOverStyle = am4core.MouseCursorStyle.pointer;
+// this adapter makes non-main character nodes to be filled with color of the main character which he/she kissed most
+nodeTemplate.adapter.add("fill", function(fill, target) {
+    let node = target;
+    let counters = {};
+    let mainChar = false;
+    node.incomingDataItems.each(function(dataItem) {
+        if(colors[dataItem.toName]){
+            mainChar = true;
+        }
+
+        if(isNaN(counters[dataItem.fromName])){
+            counters[dataItem.fromName] = dataItem.value;
+        }
+        else{
+            counters[dataItem.fromName] += dataItem.value;
+        }
+    })
+    if(mainChar){
+        return fill;
+    }
+
+    let count = 0;
+    let color;
+    let biggest = 0;
+    let biggestName;
+
+    for(var name in counters){
+        if(counters[name] > biggest){
+            biggestName = name;
+            biggest = counters[name]; 
+        }        
+    }
+    if(colors[biggestName]){
+        fill = colors[biggestName];
+    }
+  
+    return fill;
+})
+
+// link template
+var linkTemplate = chart.links.template;
+linkTemplate.strokeOpacity = 0;
+linkTemplate.fillOpacity = 0.15;
+linkTemplate.tooltipText = "{fromName} & {toName}:{value.value}";
+
+var hoverState = linkTemplate.states.create("hover");
+hoverState.properties.fillOpacity = 0.7;
+hoverState.properties.strokeOpacity = 0.7;
+
+}); // end am4core.ready()
+</script>
+
+<!-- HTML -->
+<div id="chartdiv"></div>
